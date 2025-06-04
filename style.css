@@ -34,3 +34,25 @@ header {
   border: 1px solid #ccc;
   background-color: white;
 }
+/* Toast-style notification */
+#notification {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 12px;
+  position: fixed;
+  z-index: 9999;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.5s, visibility 0.5s;
+}
+
+#notification.show {
+  visibility: visible;
+  opacity: 1;
+}
