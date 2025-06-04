@@ -15,6 +15,19 @@ const zoomOutBtn = document.getElementById("zoomOut");
 const page_num = document.getElementById("page_num");
 const page_count = document.getElementById("page_count");
 
+// Notification element
+const notification = document.createElement('div');
+notification.id = 'notification';
+document.body.appendChild(notification);
+
+function showNotification(message) {
+  notification.textContent = message;
+  notification.classList.add('show');
+  setTimeout(() => {
+    notification.classList.remove('show');
+  }, 3000);
+}
+
 function renderPage(num) {
   pageRendering = true;
 
@@ -55,7 +68,7 @@ function onPrev() {
 }
 
 function onNext() {
-  if (pageNum >= pdfDoc.numPages) return;
+  if (pageNum >= pdfDoc?.numPages) return;
   pageNum++;
   queueRenderPage(pageNum);
 }
@@ -66,25 +79,30 @@ function onZoomIn() {
 }
 
 function onZoomOut() {
-  scale -= 0.5;
-  if (scale < 0.5) scale = 0.5;
+  scale = Math.max(scale - 0.5, 0.5); // prevent too small
   renderPage(pageNum);
 }
 
 fileInput.addEventListener('change', function () {
   const file = this.files[0];
   if (file && file.type === 'application/pdf') {
+    showNotification("Sedang memuat...");
+
     const fileReader = new FileReader();
     fileReader.onload = function () {
       pdfjsLib.getDocument(fileReader.result).promise.then(pdf => {
         pdfDoc = pdf;
         page_count.textContent = pdfDoc.numPages;
         renderPage(pageNum);
+        showNotification("Silahkan membaca ebook ini");
+      }).catch(err => {
+        alert("Gagal memuat PDF.");
+        console.error(err);
       });
     };
     fileReader.readAsArrayBuffer(file);
   } else {
-    alert("Please upload a valid PDF file.");
+    alert("Silakan unggah file PDF yang valid.");
   }
 });
 
